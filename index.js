@@ -13,6 +13,10 @@ mongoose.connect(CONNECTION_STRING);
 
 
 const app = express()
+
+const dev = process.env.SERVER_ENV === "development";
+
+
 app.use(
     cors({
         credentials: true,
@@ -26,6 +30,16 @@ const sessionOptions = {
     resave: false,
     saveUninitialized: false,
 };
+
+if (process.env.SERVER_ENV !== "development") {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie = {
+        sameSite: "none",
+        secure: true,
+        domain: process.env.SERVER_URL,
+    };
+}
+
 
 app.use(session(sessionOptions));
 app.use(express.json());
