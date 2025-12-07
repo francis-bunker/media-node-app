@@ -1,0 +1,21 @@
+{
+  "name": "media-server-app",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.4.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mongoose": "^9.0.0"
+  },
+  "keywords": []
+}
