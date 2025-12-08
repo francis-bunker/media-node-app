@@ -29,23 +29,18 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET || "sm",
     resave: false,
     saveUninitialized: false,
-};
+    proxy : true,
 
-sessionOptions.proxy = true;
-sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    domain: process.env.SERVER_URL,
-};
-
-if (!dev) {
-    sessionOptions.proxy = true;
-    sessionOptions.cookie = {
+    cookie: {
         sameSite: "none",
         secure: true,
         domain: process.env.SERVER_URL,
-    };
-}
+    },
+};
+
+
+
+
 
 
 app.use(session(sessionOptions));
