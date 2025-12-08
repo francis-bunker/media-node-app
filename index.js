@@ -38,7 +38,7 @@ sessionOptions.cookie = {
     domain: process.env.SERVER_URL,
 };
 
-if (process.env.SERVER_ENV !== "development") {
+if (!dev) {
     sessionOptions.proxy = true;
     sessionOptions.cookie = {
         sameSite: "none",
