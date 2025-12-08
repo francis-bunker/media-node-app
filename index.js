@@ -9,7 +9,7 @@ import Users from "./Users/routes.js";
 import MapRoutes from "./maps/routes.js";
 import connectMongoDBSession from "connect-mongodb-session";
 
-const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm";
+const CONNECTION_STRING =process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm";
 
 mongoose.connect(CONNECTION_STRING);
 const MongoDBStore = connectMongoDBSession(session);
