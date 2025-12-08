@@ -36,11 +36,12 @@ if (process.env.SERVER_ENV !== "development") {
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-        domain: process.env.SERVER_URL,
+        //domain: process.env.SERVER_URL,
     };
 }
 
 
+app.set('trust proxy', 1);
 app.use(session(sessionOptions));
 app.use(express.json());
 Posts(app, db);
