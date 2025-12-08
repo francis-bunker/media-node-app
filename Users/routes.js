@@ -1,22 +1,22 @@
 import UserDao from "./dao.js";
 export default function Users(app) {
     const dao = UserDao();
-const signin = async (req, res) => {
-    const { username, password } = req.body;
-    const currentUser = await dao.findUserByCredentials(username, password);
-    if (currentUser) {
-        req.session["currentUser"] = currentUser.toObject();
-        req.session.save((err) => {
-            if (err) {
-                console.error("Session save error:", err);
-                return res.status(500).json({ message: "Session error" });
-            }
-            res.json(currentUser);
-        });
-    } else {
-        res.status(401).json({ message: "Unable to login. Try again later." });
-    }
-};
+    const signin = async (req, res) => {
+        const { username, password } = req.body;
+        const currentUser = await dao.findUserByCredentials(username, password);
+        if (currentUser) {
+            req.session["currentUser"] = JSON.parse(JSON.stringify(currentUser));
+            req.session.save((err) => {
+                if (err) {
+                    console.error("Session save error:", err);
+                    return res.status(500).json({ message: "Session error" });
+                }
+                res.json(currentUser);
+            });
+        } else {
+            res.status(401).json({ message: "Unable to login. Try again later." });
+        }
+    };
     const signup = async (req, res) => {
         const user = await dao.findUserByUsername(req.body.username);
         if (user) {
