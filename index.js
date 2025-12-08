@@ -7,12 +7,22 @@ import db from "./Database/index.js";
 import mongoose from "mongoose";
 import Users from "./Users/routes.js";
 import MapRoutes from "./maps/routes.js";
+import MongoDBStore from 'connect-mongodb-session';
 
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm"
 mongoose.connect(CONNECTION_STRING);
 
+const MongoStore = MongoDBStore(session);
+const store = new MongoStore({
+    uri: CONNECTION_STRING,
+    collection: 'sessions',
+    expires: 1000 * 60 * 60 * 24 * 7,
+});
+
 
 const app = express()
+
+app.set('trust proxy', 1);
 
 const dev = process.env.SERVER_ENV === "development";
 
@@ -36,6 +46,8 @@ if (process.env.SERVER_ENV !== "development") {
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
+        store: store,
+
         //domain: process.env.SERVER_URL,
     };
 }
