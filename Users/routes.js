@@ -25,9 +25,16 @@ export default function Users(app) {
         }
         const { username, password } = req.body;
         const currentUser = await dao.createUser({ username, password });
-        req.session["currentUser"] = currentUser;
-        res.json(currentUser);
+        req.session["currentUser"] = JSON.parse(JSON.stringify(currentUser));
+        req.session.save((err) => {
+            if (err) {
+                console.error("Session save error:", err);
+                return res.status(500).json({ message: "Session error" });
+            }
+            res.json(currentUser);
+        });
     };
+
     const signupAdmin = async (req, res) => {
         const user = await dao.findUserByUsername(req.body.username);
         if (user) {
@@ -36,9 +43,15 @@ export default function Users(app) {
         }
         const { username, password } = req.body;
         const currentUser = await dao.createAdminUser({ username, password });
-        req.session["currentUser"] = currentUser;
-        res.json(currentUser);
-    }
+        req.session["currentUser"] = JSON.parse(JSON.stringify(currentUser));
+        req.session.save((err) => {
+            if (err) {
+                console.error("Session save error:", err);
+                return res.status(500).json({ message: "Session error" });
+            }
+            res.json(currentUser);
+        });
+    };
     const profile = async (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
