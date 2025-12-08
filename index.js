@@ -12,14 +12,15 @@ import connectMongoDBSession from "connect-mongodb-session";
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm";
 
 mongoose.connect(CONNECTION_STRING);
+
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
     uri: CONNECTION_STRING,
     collection: "sessions",
 });
+
 const app = express();
 app.set("trust proxy", 1);
-
 app.use(
     cors({
         credentials: true,
@@ -27,37 +28,46 @@ app.use(
     })
 );
 
+const dev = process.env.SERVER_ENV === "development";
+
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "sm",
     resave: false,
     saveUninitialized: false,
-    cookie: {},
+    proxy: !dev,
+    store: dev ? undefined : store,
+    cookie: dev
+        ? { sameSite: "lax", secure: false }
+        : {
+              sameSite: "none",
+              secure: true,
+              maxAge: 1000 * 60 * 60 * 24 * 7,
+          },
 };
 
-const dev = process.env.SERVER_ENV === "development";
+const addPartitionedAttribute = (req, res, next) => {
+    const original = res.setHeader.bind(res);
 
-if (!dev) {
-    sessionOptions.proxy = true;
-    sessionOptions.store = store;
-    sessionOptions.cookie = {
-        sameSite: "none",
-        secure: true,
-        //domain: process.env.SERVER_URL, 
-        maxAge: 1000 * 60 * 60 * 24 * 7,
+    res.setHeader = (name, value) => {
+        if (name === "Set-Cookie") {
+            if (Array.isArray(value)) {
+                value = value.map(v => v + "; Partitioned");
+            } else {
+                value = value + "; Partitioned";
+            }
+        }
+        return original(name, value);
     };
-} else {
-    sessionOptions.cookie = {
-        sameSite: "lax",
-        secure: false,
-    };
-}
 
+    next();
+};
+
+app.use(addPartitionedAttribute);
 app.use(session(sessionOptions));
-app.use(express.json());
 
+app.use(express.json());
 Posts(app, db);
 Users(app);
 MapRoutes(app);
-
 
 app.listen(4000, () => console.log("Server running on 4000"));
