@@ -57,7 +57,6 @@ export default function Users(app) {
     app.get("/api/users/profile", profile);
     app.get("/api/users/:userId", findUserById);
     app.post("/api/users/signout", signout);
-    app.get("/api/users/profile", profile);
 
     app.post("/api/users/signin", signin);
     app.post("/api/users/signup", signup);
