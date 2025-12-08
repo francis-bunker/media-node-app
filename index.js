@@ -7,25 +7,18 @@ import db from "./Database/index.js";
 import mongoose from "mongoose";
 import Users from "./Users/routes.js";
 import MapRoutes from "./maps/routes.js";
-import MongoDBStore from 'connect-mongodb-session';
+import connectMongoDBSession from "connect-mongodb-session";
 
-const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm"
+const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/sm";
+
 mongoose.connect(CONNECTION_STRING);
-
-const MongoStore = MongoDBStore(session);
-const store = new MongoStore({
+const MongoDBStore = connectMongoDBSession(session);
+const store = new MongoDBStore({
     uri: CONNECTION_STRING,
-    collection: 'sessions',
-    expires: 1000 * 60 * 60 * 24 * 7,
+    collection: "sessions",
 });
-
-
-const app = express()
-
-app.set('trust proxy', 1);
-
-const dev = process.env.SERVER_ENV === "development";
-
+const app = express();
+app.set("trust proxy", 1);
 
 app.use(
     cors({
@@ -34,31 +27,37 @@ app.use(
     })
 );
 
-
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "sm",
     resave: false,
     saveUninitialized: false,
+    cookie: {},
 };
 
-if (process.env.SERVER_ENV !== "development") {
+const dev = process.env.SERVER_ENV === "development";
+
+if (!dev) {
     sessionOptions.proxy = true;
     sessionOptions.store = store;
-
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-
-        //domain: process.env.SERVER_URL,
+        domain: process.env.SERVER_URL, 
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    };
+} else {
+    sessionOptions.cookie = {
+        sameSite: "lax",
+        secure: false,
     };
 }
 
-
-app.set('trust proxy', 1);
 app.use(session(sessionOptions));
 app.use(express.json());
+
 Posts(app, db);
 Users(app);
 MapRoutes(app);
-app.get('/hello', (req, res) => { res.send('Hello World!') })
-app.listen(4000)
+
+
+app.listen(4000, () => console.log("Server running on 4000"));
