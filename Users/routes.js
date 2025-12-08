@@ -54,6 +54,7 @@ export default function Users(app) {
             res.sendStatus(404);
         }
     };
+
     app.get("/api/users/profile", profile);
     app.get("/api/users/:userId", findUserById);
     app.post("/api/users/signout", signout);

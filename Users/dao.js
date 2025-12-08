@@ -17,13 +17,17 @@ export default function UserDao() {
     async function findUserById(userId) {
         return model.findById(userId);
     }
+
     const findUserByCredentials = (username, password) => model.findOne({ username, password });
     return {
         createUser,
         findUserByCredentials,
         findUserByUsername,
         findUserById,
-        createAdminUser
+        createAdminUser,
+        
+    
     };
+    
 
 }
