@@ -43,10 +43,11 @@ const sessionOptions = {
 
 if (process.env.SERVER_ENV !== "development") {
     sessionOptions.proxy = true;
+    sessionOptions.store = store;
+
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-        store: store,
 
         //domain: process.env.SERVER_URL,
     };
