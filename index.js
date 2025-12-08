@@ -42,7 +42,7 @@ if (!dev) {
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-        domain: process.env.SERVER_URL, 
+        //domain: process.env.SERVER_URL, 
         maxAge: 1000 * 60 * 60 * 24 * 7,
     };
 } else {
