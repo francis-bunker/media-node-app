@@ -17,6 +17,11 @@ const store = new MongoDBStore({
     uri: CONNECTION_STRING,
     collection: "sessions",
 });
+
+store.on('error', function(error) {
+    console.error('Session store error:', error);
+});
+
 const app = express();
 app.set("trust proxy", 1);
 

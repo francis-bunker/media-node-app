@@ -8,7 +8,7 @@ const postSchema = new mongoose.Schema({
     photo: String,
     location_lat: Number,
     location_long: Number,
-    likes: [userSchema],
-    place_id: String
+    place_id: String,
+    place_name: String
 });
 export default postSchema;

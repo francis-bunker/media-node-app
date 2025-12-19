@@ -54,12 +54,13 @@ export default function Posts(app, db) {
         await dao.deletePost(postId);
         res.sendStatus(204);
     }
-    const addLike = async (req, res) => {
-        const currentUser = req.session["currentUser"];
-        await dao.addLike(req.params.postId, currentUser._id);
-        res.sendStatus(204);
+
+    const getPlaceTitleByPostId = async (req, res) => {
+        const postId = req.params.postId;
+        const placeTitle = await dao.getPlaceTitleByPostId(postId);
+        res.send(placeTitle);
     }
-    app.post("/api/posts/:postId/like", addLike);
+    app.get("/api/posts/:postId/title", getPlaceTitleByPostId);
     app.delete("/api/posts/:postId", deletePost);
     app.get("/api/posts/place/:placeId", findPostByPlaceid);
     app.get("/api/posts/user/:userId", findPostByUserId);

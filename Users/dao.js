@@ -17,6 +17,9 @@ export default function UserDao() {
     async function findUserById(userId) {
         return model.findById(userId);
     }
+    async function updateUser(user_id, user) {
+        return model.findByIdAndUpdate(user_id, user);
+    }
 
     const findUserByCredentials = (username, password) => model.findOne({ username, password });
     return {
@@ -25,7 +28,7 @@ export default function UserDao() {
         findUserByUsername,
         findUserById,
         createAdminUser,
-        
+        updateUser,
     
     };
     
